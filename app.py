@@ -2,7 +2,13 @@ import streamlit as st
 import pandas as pd
 import pickle
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    accuracy_score,
+    roc_auc_score,
+    matthews_corrcoef
+)
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -34,8 +40,10 @@ if uploaded_file:
         X_test_scaled = scaler.fit_transform(X_test)
 
         # Model selection
-        model_choice = st.selectbox("Select a model to run", 
-            ["Logistic Regression", "Decision Tree", "kNN", "Naive Bayes", "Random Forest", "XGBoost"])
+        model_choice = st.selectbox(
+            "Select a model to run",
+            ["Logistic Regression", "Decision Tree", "kNN", "Naive Bayes", "Random Forest", "XGBoost"]
+        )
 
         if st.button("Run Model"):
             try:
@@ -49,17 +57,39 @@ if uploaded_file:
                 y_test_named = pd.Series(y_test).map(label_map)
                 y_pred_named = pd.Series(y_pred).map(label_map)
 
+                # Classification report
                 st.subheader("📊 Classification Report")
                 report = classification_report(y_test_named, y_pred_named, output_dict=True)
                 report_df = pd.DataFrame(report).transpose()
                 st.dataframe(report_df.style.format("{:.2f}"))
 
+                # Confusion matrix (dynamic)
                 st.subheader("🧮 Confusion Matrix")
-                cm = confusion_matrix(y_test_named, y_pred_named, labels=["Negative", "Positive"])
-                cm_df = pd.DataFrame(cm, index=["Actual Negative", "Actual Positive"], columns=["Predicted Negative", "Predicted Positive"])
+                all_labels = sorted(set(y_test_named) | set(y_pred_named))
+                cm = confusion_matrix(y_test_named, y_pred_named, labels=all_labels)
+                cm_df = pd.DataFrame(
+                    cm,
+                    index=[f"Actual {label}" for label in all_labels],
+                    columns=[f"Predicted {label}" for label in all_labels]
+                )
                 fig, ax = plt.subplots()
                 sns.heatmap(cm_df, annot=True, fmt="d", cmap="Blues", ax=ax)
                 st.pyplot(fig)
+
+                # Additional metrics
+                st.subheader("📌 Additional Metrics")
+                accuracy = accuracy_score(y_test, y_pred)
+                try:
+                    auc = roc_auc_score(y_test, model.predict_proba(X_test_scaled)[:, 1])
+                except Exception:
+                    auc = "N/A"
+                mcc = matthews_corrcoef(y_test, y_pred)
+
+                st.markdown(f"""
+                - **Accuracy**: `{accuracy:.4f}`  
+                - **AUC Score**: `{auc if isinstance(auc, str) else f"{auc:.4f}"}`  
+                - **Matthews Correlation Coefficient (MCC)**: `{mcc:.4f}`
+                """)
 
             except Exception as e:
                 st.error(f"Error loading model or running prediction: {e}")
