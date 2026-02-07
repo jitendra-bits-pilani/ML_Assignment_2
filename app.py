@@ -22,6 +22,15 @@ if uploaded_file:
     st.subheader("📄 Uploaded Data Preview")
     st.dataframe(test_data.head())
 
+    # Add download button for the uploaded dataset
+    csv = test_data.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="Download Uploaded CSV",
+        data=csv,
+        file_name="uploaded_diabetes_data.csv",
+        mime="text/csv",
+    )
+
     # Encode categorical features
     encoded_data = test_data.copy()
     for col in encoded_data.columns:

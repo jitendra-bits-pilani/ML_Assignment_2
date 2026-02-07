@@ -80,7 +80,7 @@ project/
 ---
 
 ## Deployment
-- **Live App**: [Streamlit Community Cloud Link] *(add after deployment)*  
+- **Live App**: https://mlassignment2-jhezzjrsfvbugtkmzcnkuq.streamlit.app/ 
 - **Features**:
   - CSV upload (test data only for free tier)  
   - Model selection dropdown (6 models)  
@@ -124,7 +124,7 @@ python -m streamlit run app.py
 ### 4. Deploy
 - Push repo to GitHub  
 - Deploy via [Streamlit Cloud](https://streamlit.io/cloud)  
-- Add the live app link above  
+- live app link : https://mlassignment2-jhezzjrsfvbugtkmzcnkuq.streamlit.app/ 
 
 ---
 ```
