@@ -15,21 +15,26 @@ import matplotlib.pyplot as plt
 st.set_page_config(page_title="Diabetes Classification Models", layout="wide")
 st.title("🩺 Diabetes Classification Models")
 
+# Provide dataset download link first (from GitHub raw link)
+default_url = "https://raw.githubusercontent.com/jitendra-bits-pilani/ML_Assignment_2/refs/heads/main/diabetes_data_upload.csv"
+default_data = pd.read_csv(default_url)
+
+csv = default_data.to_csv(index=False).encode("utf-8")
+st.download_button(
+    label="Download Sample Diabetes Dataset",
+    data=csv,
+    file_name="diabetes_data_upload.csv",
+    mime="text/csv",
+)
+
+st.markdown("---")
+
 # Upload test dataset
 uploaded_file = st.file_uploader("Upload CSV file", type="csv")
 if uploaded_file:
     test_data = pd.read_csv(uploaded_file)
     st.subheader("📄 Uploaded Data Preview")
     st.dataframe(test_data.head())
-
-    # Add download button for the uploaded dataset
-    csv = test_data.to_csv(index=False).encode("utf-8")
-    st.download_button(
-        label="Download Uploaded CSV",
-        data=csv,
-        file_name="uploaded_diabetes_data.csv",
-        mime="text/csv",
-    )
 
     # Encode categorical features
     encoded_data = test_data.copy()
