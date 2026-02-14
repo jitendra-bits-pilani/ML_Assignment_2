@@ -71,14 +71,17 @@ if uploaded_file:
                 y_test_named = pd.Series(y_test).map(label_map)
                 y_pred_named = pd.Series(y_pred).map(label_map)
 
+                # --- Evaluation Metrics Section ---
+                st.header("Evaluation Metrics")
+
                 # Classification report
-                st.subheader("📊 Classification Report")
+                st.subheader("Classification Report")
                 report = classification_report(y_test_named, y_pred_named, output_dict=True)
                 report_df = pd.DataFrame(report).transpose()
                 st.dataframe(report_df.style.format("{:.2f}"))
 
                 # Confusion matrix (dynamic)
-                st.subheader("🧮 Confusion Matrix")
+                st.subheader("Confusion Matrix")
                 all_labels = sorted(set(y_test_named) | set(y_pred_named))
                 cm = confusion_matrix(y_test_named, y_pred_named, labels=all_labels)
                 cm_df = pd.DataFrame(
@@ -91,7 +94,7 @@ if uploaded_file:
                 st.pyplot(fig)
 
                 # Additional metrics
-                st.subheader("📌 Additional Metrics")
+                st.subheader("Additional Metrics")
                 accuracy = accuracy_score(y_test, y_pred)
                 try:
                     auc = roc_auc_score(y_test, model.predict_proba(X_test_scaled)[:, 1])
